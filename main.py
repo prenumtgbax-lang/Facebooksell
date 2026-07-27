@@ -29,8 +29,8 @@ from telegram.constants import ParseMode
 # ⚙️ CONFIGURATION & FILE PATHS
 # ==============================================================================
 
-TOKEN = "YOUR_BOT_TOKEN_HERE"  # Replace with your Bot Token
-ADMIN_ID = 6062589611          # Default Admin ID
+TOKEN = "8996063667:AAHaWei-z3SAemIWVBAtHxIDY1nkQQhgGqI"  # Replace with your Bot Token
+ADMIN_ID = 6922048527          # Default Admin ID
 
 # Database Storage Files
 USER_DATA_FILE = "zarya_users.json"
