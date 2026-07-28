@@ -1,8 +1,6 @@
-python-telegram-bot
-python-telegram-bot>=20.0
-python-telegram-bot[job-queue]
-httpx[http2]
-pyotp
-aiohttp
-nest_asyncio
-certifi
+python-telegram-bot[job-queue]>=20.0
+httpx[http2]>=0.24.0
+pyotp>=2.8.0
+aiohttp>=3.8.0
+nest_asyncio>=1.5.0
+certifi>=2023.0.0
