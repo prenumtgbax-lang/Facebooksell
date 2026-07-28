@@ -662,7 +662,7 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
 
     # 6. SUPPORT BUTTON
     elif text == "Support":
-        supp_usr = cfg.get("support_username", "@Niloy_Owner")
+        supp_usr = cfg.get("support_username", "@YourDomains")
         msg = (
             f"{ET('support')} <b>LIVE SUPPORT CENTER</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
