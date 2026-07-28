@@ -83,7 +83,7 @@ EMOJI_MAP = {
     "dollar": "5893473283696759404",
     "mic": "6237568428316562386",
     "premium": "6246919169120408471",
-    "done": "6082468062517270284",
+    "done": "6206378324273403309",
     "coin": "6183763603473044358",
     "vip": "6109355038826567130",
     "notification": "6053142399482339205",
@@ -215,7 +215,7 @@ DEFAULT_CONFIG = {
     "sell_system_active": True,
     "uid_pass_active": True,
     "uid_cookies_active": True,
-    "support_username": "@Niloy_Owner",
+    "support_username": "@YourDomains",
     "force_join_channels": []
 }
 
