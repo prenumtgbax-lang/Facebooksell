@@ -69,7 +69,6 @@ EMOJI_MAP = {
     "star": "6336639073133794426",
     "date": "6336848409839801489",
     "pin": "6111410240807245099",
-    "money": "6111799373434197692",
     "danger": "6109451886044124125",
     "1": "6109152797406532734",
     "2": "6109321250318849544",
@@ -89,13 +88,20 @@ EMOJI_MAP = {
     "vip": "6109355038826567130",
     "notification": "6053142399482339205",
     "search": "6053117952528493140",
-    "id": "6338935574967098253",
     "100%": "6053175754198358605",
     "ok": "6314082948572256406",
     "upp": "6312314362644143742",
     "world": "6314138297815803150",
     "like": "6314553256081103478",
-    "ck": "6314471909400519173"
+    "ck": "6314471909400519173",
+    # Specific Custom Emojis Required
+    "announcement": "6311947409228307310",
+    "key": "5816947029590412771",
+    "id": "6338946058982267602",
+    "user": "6111635666460743256",
+    "money": "5870921716095520124",
+    "tag": "5816741957786930940",
+    "phone": "6204108584381322968"
 }
 
 def EI(key: str) -> str:
@@ -210,7 +216,7 @@ DEFAULT_CONFIG = {
     "uid_pass_active": True,
     "uid_cookies_active": True,
     "support_username": "@Niloy_Owner",
-    "force_join_channels": []  # List of dicts: [{"chat_id": -100xxx, "link": "https://t.me/..."}]
+    "force_join_channels": []
 }
 
 def load_data(filename, default_val=None):
@@ -418,8 +424,8 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 notif = (
                     f"{ET('gift')} <b>NEW REFERRAL REWARD!</b>\n"
                     f"━━━━━━━━━━━━━━━━━━━━\n"
-                    f"{ET('vip')} Invited User: <b>{user.full_name}</b> (<code>{uid}</code>)\n"
-                    f"{ET('coin')} Bonus Credited: <code>+৳{reward:.2f} BDT</code>"
+                    f"{ET('user')} Invited User: <b>{user.full_name}</b> (<code>{uid}</code>)\n"
+                    f"{ET('money')} Bonus Credited: <code>+৳{reward:.2f} BDT</code>"
                 )
                 try:
                     await context.bot.send_message(chat_id=int(ref_id), text=notif, parse_mode=ParseMode.HTML)
@@ -467,7 +473,7 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
         msg = (
             f"{ET('balance')} <b>ACCOUNT BALANCE OVERVIEW</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
-            f"{ET('coin')} <b>Total Balance:</b> <code>৳{u_data['balance']:.2f} BDT</code>\n"
+            f"{ET('money')} <b>Total Balance:</b> <code>৳{u_data['balance']:.2f} BDT</code>\n"
             f"{ET('withdraw')} <b>Total Withdraw:</b> <code>৳{u_data['total_withdraw']:.2f} BDT</code>\n\n"
             f"{ET('facebook')} <b>Total Sells:</b> <code>{u_data['total_sell']}</code>\n"
             f"{ET('done')} <b>Approved:</b> <code>{u_data['approved_sell']}</code>\n"
@@ -506,7 +512,7 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
 
     # UID & PASS CHOSEN
     elif text.startswith("UID & Pass"):
-        if not cfg.get("uid_pass_active", True):
+        if not cfg.get("sell_system_active", True) or not cfg.get("uid_pass_active", True):
             await update.message.reply_text(f"{ET('cross')} <b>UID & Pass sell option is currently offline.</b>", parse_mode=ParseMode.HTML)
             return
         
@@ -528,7 +534,7 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
             f"{ET('pin')} <b>First Name:</b> <code>{fn}</code>\n"
             f"{ET('pin')} <b>Last Name:</b> <code>{ln}</code>\n"
             f"{ET('key')} <b>Password:</b> <code>{default_pass}</code>\n"
-            f"{ET('coin')} <b>Price:</b> <code>৳{rate:.2f} BDT</code>\n"
+            f"{ET('money')} <b>Price:</b> <code>৳{rate:.2f} BDT</code>\n"
             f"{ET('24h')} <b>Report Time:</b> <code>12 Hours</code>\n\n"
             f"{ET('arrow')} Click <b>Submit Details</b> to submit your Facebook UID."
         )
@@ -544,7 +550,7 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
 
     # UID & COOKIES CHOSEN
     elif text.startswith("UID & Cookies"):
-        if not cfg.get("uid_cookies_active", True):
+        if not cfg.get("sell_system_active", True) or not cfg.get("uid_cookies_active", True):
             await update.message.reply_text(f"{ET('cross')} <b>UID & Cookies sell option is currently offline.</b>", parse_mode=ParseMode.HTML)
             return
         
@@ -566,7 +572,7 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
             f"{ET('pin')} <b>First Name:</b> <code>{fn}</code>\n"
             f"{ET('pin')} <b>Last Name:</b> <code>{ln}</code>\n"
             f"{ET('key')} <b>Password:</b> <code>{default_pass}</code>\n"
-            f"{ET('coin')} <b>Price:</b> <code>৳{rate:.2f} BDT</code>\n"
+            f"{ET('money')} <b>Price:</b> <code>৳{rate:.2f} BDT</code>\n"
             f"{ET('24h')} <b>Report Time:</b> <code>12 Hours</code>\n\n"
             f"{ET('arrow')} Click <b>Submit Details</b> to proceed."
         )
@@ -610,7 +616,7 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
             f"{ET('link')} <b>Your Referral Link:</b>\n"
             f"<code>{ref_link}</code>\n\n"
             f"{ET('star')} <b>Your Total Referrals:</b> <code>{u_data['referral_count']}</code>\n"
-            f"{ET('coin')} <b>Total Earned:</b> <code>৳{u_data['referral_count'] * ref_reward:.2f} BDT</code>"
+            f"{ET('money')} <b>Total Earned:</b> <code>৳{u_data['referral_count'] * ref_reward:.2f} BDT</code>"
         )
         await update.message.reply_text(msg, parse_mode=ParseMode.HTML)
         return
@@ -712,7 +718,9 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
         
         await update.message.reply_text(
             f"{ET('done')} <b>Facebook UID & Pass Request Submitted Successfully!</b>\n"
-            f"{ET('24h')} Request ID: <code>#{sell_id}</code> (Report time: 12 Hours)",
+            f"{ET('tag')} Request ID: <code>#{sell_id}</code>\n"
+            f"{ET('id')} Facebook UID: <code>{fb_uid}</code>\n"
+            f"{ET('24h')} Report time: 12 Hours",
             reply_markup=build_main_keyboard(uid),
             parse_mode=ParseMode.HTML
         )
@@ -722,13 +730,13 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
         adm_msg = (
             f"{ET('notification')} <b>NEW FACEBOOK SELL REQUEST (#{sell_id})</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
-            f"👤 <b>User:</b> {user.full_name} (<code>{uid}</code>)\n"
-            f"🏷️ <b>Type:</b> UID & Password\n"
-            f"📌 <b>First Name:</b> <code>{sell_temp['fn']}</code>\n"
-            f"📌 <b>Last Name:</b> <code>{sell_temp['ln']}</code>\n"
-            f"🔑 <b>Password:</b> <code>{sell_temp['pass']}</code>\n"
-            f"🆔 <b>UID:</b> <code>{fb_uid}</code>\n"
-            f"💰 <b>Price:</b> <code>৳{sell_temp['price']:.2f} BDT</code>"
+            f"{ET('user')} <b>User:</b> {user.full_name} (<code>{uid}</code>)\n"
+            f"{ET('tag')} <b>Type:</b> UID & Password\n"
+            f"{ET('pin')} <b>First Name:</b> <code>{sell_temp['fn']}</code>\n"
+            f"{ET('pin')} <b>Last Name:</b> <code>{sell_temp['ln']}</code>\n"
+            f"{ET('key')} <b>Password:</b> <code>{sell_temp['pass']}</code>\n"
+            f"{ET('id')} <b>UID:</b> <code>{fb_uid}</code>\n"
+            f"{ET('money')} <b>Price:</b> <code>৳{sell_temp['price']:.2f} BDT</code>"
         )
         adm_kb = {"inline_keyboard": [[
             {"text": "APPROVE", "callback_data": f"app_sell_{sell_id}", "style": "success", "icon_custom_emoji_id": EI("ok")},
@@ -780,7 +788,9 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
         
         await update.message.reply_text(
             f"{ET('done')} <b>Facebook UID & Cookies Request Submitted Successfully!</b>\n"
-            f"{ET('24h')} Request ID: <code>#{sell_id}</code> (Report time: 12 Hours)",
+            f"{ET('tag')} Request ID: <code>#{sell_id}</code>\n"
+            f"{ET('id')} Facebook UID: <code>{fb_uid}</code>\n"
+            f"{ET('24h')} Report time: 12 Hours",
             reply_markup=build_main_keyboard(uid),
             parse_mode=ParseMode.HTML
         )
@@ -790,14 +800,14 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
         adm_msg = (
             f"{ET('notification')} <b>NEW FACEBOOK SELL REQUEST (#{sell_id})</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
-            f"👤 <b>User:</b> {user.full_name} (<code>{uid}</code>)\n"
-            f"🏷️ <b>Type:</b> UID & Cookies\n"
-            f"📌 <b>First Name:</b> <code>{sell_temp['fn']}</code>\n"
-            f"📌 <b>Last Name:</b> <code>{sell_temp['ln']}</code>\n"
-            f"🔑 <b>Password:</b> <code>{sell_temp['pass']}</code>\n"
-            f"🆔 <b>UID:</b> <code>{fb_uid}</code>\n"
-            f"🍪 <b>Cookies:</b> <code>{cookies_data[:50]}...</code>\n"
-            f"💰 <b>Price:</b> <code>৳{sell_temp['price']:.2f} BDT</code>"
+            f"{ET('user')} <b>User:</b> {user.full_name} (<code>{uid}</code>)\n"
+            f"{ET('tag')} <b>Type:</b> UID & Cookies\n"
+            f"{ET('pin')} <b>First Name:</b> <code>{sell_temp['fn']}</code>\n"
+            f"{ET('pin')} <b>Last Name:</b> <code>{sell_temp['ln']}</code>\n"
+            f"{ET('key')} <b>Password:</b> <code>{sell_temp['pass']}</code>\n"
+            f"{ET('id')} <b>UID:</b> <code>{fb_uid}</code>\n"
+            f"{ET('ck')} <b>Cookies:</b> <code>{cookies_data[:50]}...</code>\n"
+            f"{ET('money')} <b>Price:</b> <code>৳{sell_temp['price']:.2f} BDT</code>"
         )
         adm_kb = {"inline_keyboard": [[
             {"text": "APPROVE", "callback_data": f"app_sell_{sell_id}", "style": "success", "icon_custom_emoji_id": EI("ok")},
@@ -821,7 +831,8 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
         min_w = cfg.get("min_withdraw", 50.0)
         
         await update.message.reply_text(
-            f"{ET('money')} <b>Enter withdraw amount (Min: ৳{min_w:.2f} BDT):</b>",
+            f"{ET('money')} <b>Enter withdraw amount (Min: ৳{min_w:.2f} BDT):</b>\n"
+            f"{ET('balance')} Your Active Balance: <code>৳{u_data['balance']:.2f} BDT</code>",
             parse_mode=ParseMode.HTML
         )
         return
@@ -835,18 +846,30 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
 
         min_w = cfg.get("min_withdraw", 50.0)
         if amount < min_w:
-            await update.message.reply_text(f"{ET('danger')} Minimum withdrawal amount is <code>৳{min_w:.2f} BDT</code>.", parse_mode=ParseMode.HTML)
+            await update.message.reply_text(
+                f"{ET('danger')} <b>WITHDRAWAL LIMIT ERROR!</b>\n"
+                f"━━━━━━━━━━━━━━━━━━━━\n"
+                f"Minimum withdrawal limit is: <code>৳{min_w:.2f} BDT</code>\n"
+                f"Your entered amount: <code>৳{amount:.2f} BDT</code>",
+                parse_mode=ParseMode.HTML
+            )
             return
 
         if amount > u_data["balance"]:
-            await update.message.reply_text(f"{ET('danger')} Insufficient balance! Your active balance is <code>৳{u_data['balance']:.2f} BDT</code>.", parse_mode=ParseMode.HTML)
+            await update.message.reply_text(
+                f"{ET('danger')} <b>INSUFFICIENT BALANCE!</b>\n"
+                f"━━━━━━━━━━━━━━━━━━━━\n"
+                f"Your Active Balance: <code>৳{u_data['balance']:.2f} BDT</code>\n"
+                f"Requested Amount: <code>৳{amount:.2f} BDT</code>",
+                parse_mode=ParseMode.HTML
+            )
             return
 
         context.user_data["withdraw_amount"] = amount
         context.user_data["state"] = "WAITING_WITHDRAW_ACC"
         
         await update.message.reply_text(
-            f"{ET('pin')} <b>Enter your {context.user_data['withdraw_method']} Account Number / Address:</b>",
+            f"{ET('phone')} <b>Enter your {context.user_data['withdraw_method']} Account Number / Address:</b>",
             parse_mode=ParseMode.HTML
         )
         return
@@ -880,10 +903,10 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
         await update.message.reply_text(
             f"{ET('done')} <b>Withdrawal Request Submitted!</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
-            f"🏷️ <b>Method:</b> {method}\n"
-            f"💰 <b>Amount:</b> ৳{amount:.2f} BDT\n"
-            f"📞 <b>Account:</b> {acc_num}\n"
-            f"🆔 <b>Request ID:</b> #{wd_id}",
+            f"{ET('tag')} <b>Method:</b> {method}\n"
+            f"{ET('money')} <b>Amount:</b> ৳{amount:.2f} BDT\n"
+            f"{ET('phone')} <b>Account:</b> {acc_num}\n"
+            f"{ET('id')} <b>Request ID:</b> #{wd_id}",
             reply_markup=build_main_keyboard(uid),
             parse_mode=ParseMode.HTML
         )
@@ -893,10 +916,10 @@ async def handle_text_messages(update: Update, context: ContextTypes.DEFAULT_TYP
         adm_msg = (
             f"{ET('withdraw')} <b>NEW WITHDRAWAL REQUEST (#{wd_id})</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
-            f"👤 <b>User:</b> {user.full_name} (<code>{uid}</code>)\n"
-            f"🏷️ <b>Method:</b> {method}\n"
-            f"💰 <b>Amount:</b> <code>৳{amount:.2f} BDT</code>\n"
-            f"📞 <b>Account:</b> <code>{acc_num}</code>"
+            f"{ET('user')} <b>User:</b> {user.full_name} (<code>{uid}</code>)\n"
+            f"{ET('tag')} <b>Method:</b> {method}\n"
+            f"{ET('money')} <b>Amount:</b> <code>৳{amount:.2f} BDT</code>\n"
+            f"{ET('phone')} <b>Account:</b> <code>{acc_num}</code>"
         )
         adm_kb = {"inline_keyboard": [[
             {"text": "APPROVE", "callback_data": f"app_wd_{wd_id}", "style": "success", "icon_custom_emoji_id": EI("ok")},
@@ -932,7 +955,7 @@ async def handle_callback_queries(update: Update, context: ContextTypes.DEFAULT_
                 pass
             await show_main_menu(update, context)
         else:
-            await query.answer("❌ You have not joined all mandatory channels yet!", show_alert=True)
+            await query.answer("You have not joined all mandatory channels yet!", show_alert=True)
         return
 
     # WITHDRAW START FROM BALANCE MENU
@@ -942,7 +965,10 @@ async def handle_callback_queries(update: Update, context: ContextTypes.DEFAULT_
         min_w = cfg.get("min_withdraw", 50.0)
         
         if u_data["balance"] < min_w:
-            await query.answer(f"Minimum withdrawal requirement is ৳{min_w:.2f} BDT!", show_alert=True)
+            await query.answer(
+                f"Insufficient Balance!\nMin Withdraw: ৳{min_w:.2f} BDT\nYour Balance: ৳{u_data['balance']:.2f} BDT",
+                show_alert=True
+            )
             return
             
         btn_rows = []
@@ -985,14 +1011,16 @@ async def handle_callback_queries(update: Update, context: ContextTypes.DEFAULT_
             if u["pending_sell"] > 0: u["pending_sell"] -= 1
             update_user(target_uid, u)
             
-            await query.edit_message_text(f"✅ <b>Approved Sell Request #{sell_id}</b>", parse_mode=ParseMode.HTML)
+            await query.edit_message_text(f"{ET('done')} <b>Approved Sell Request #{sell_id}</b>", parse_mode=ParseMode.HTML)
             
-            # Notify User
+            # Notify User with Facebook UID
+            fb_uid = s.get("uid", "N/A")
             notif = (
                 f"{ET('done')} <b>FACEBOOK SELL APPROVED!</b>\n"
                 f"━━━━━━━━━━━━━━━━━━━━\n"
-                f"Request ID: <code>#{sell_id}</code>\n"
-                f"Amount Credited: <code>+৳{s['price']:.2f} BDT</code>"
+                f"{ET('tag')} Request ID: <code>#{sell_id}</code>\n"
+                f"{ET('id')} Facebook UID: <code>{fb_uid}</code>\n"
+                f"{ET('money')} Amount Credited: <code>+৳{s['price']:.2f} BDT</code>"
             )
             try:
                 await context.bot.send_message(chat_id=int(target_uid), text=notif, parse_mode=ParseMode.HTML)
@@ -1017,14 +1045,16 @@ async def handle_callback_queries(update: Update, context: ContextTypes.DEFAULT_
             if u["pending_sell"] > 0: u["pending_sell"] -= 1
             update_user(target_uid, u)
             
-            await query.edit_message_text(f"❌ <b>Rejected Sell Request #{sell_id}</b>", parse_mode=ParseMode.HTML)
+            await query.edit_message_text(f"{ET('cross')} <b>Rejected Sell Request #{sell_id}</b>", parse_mode=ParseMode.HTML)
             
-            # Notify User
+            # Notify User with Facebook UID
+            fb_uid = s.get("uid", "N/A")
             notif = (
                 f"{ET('cross')} <b>FACEBOOK SELL REJECTED</b>\n"
                 f"━━━━━━━━━━━━━━━━━━━━\n"
-                f"Request ID: <code>#{sell_id}</code>\n"
-                f"Your Facebook ID sell request was not approved."
+                f"{ET('tag')} Request ID: <code>#{sell_id}</code>\n"
+                f"{ET('id')} Facebook UID: <code>{fb_uid}</code>\n"
+                f"{ET('danger')} Your Facebook ID sell request was not approved."
             )
             try:
                 await context.bot.send_message(chat_id=int(target_uid), text=notif, parse_mode=ParseMode.HTML)
@@ -1048,15 +1078,15 @@ async def handle_callback_queries(update: Update, context: ContextTypes.DEFAULT_
             u["total_withdraw"] += w["amount"]
             update_user(target_uid, u)
             
-            await query.edit_message_text(f"✅ <b>Approved Withdrawal #{wd_id}</b>", parse_mode=ParseMode.HTML)
+            await query.edit_message_text(f"{ET('done')} <b>Approved Withdrawal #{wd_id}</b>", parse_mode=ParseMode.HTML)
             
             # Notify User
             notif = (
                 f"{ET('done')} <b>WITHDRAWAL APPROVED!</b>\n"
                 f"━━━━━━━━━━━━━━━━━━━━\n"
-                f"Request ID: <code>#{wd_id}</code>\n"
-                f"Amount: <code>৳{w['amount']:.2f} BDT</code>\n"
-                f"Method: {w['method']}"
+                f"{ET('tag')} Request ID: <code>#{wd_id}</code>\n"
+                f"{ET('money')} Amount: <code>৳{w['amount']:.2f} BDT</code>\n"
+                f"{ET('phone')} Method: {w['method']}"
             )
             try:
                 await context.bot.send_message(chat_id=int(target_uid), text=notif, parse_mode=ParseMode.HTML)
@@ -1081,14 +1111,14 @@ async def handle_callback_queries(update: Update, context: ContextTypes.DEFAULT_
             u["balance"] += w["amount"]
             update_user(target_uid, u)
             
-            await query.edit_message_text(f"❌ <b>Rejected Withdrawal #{wd_id}</b>", parse_mode=ParseMode.HTML)
+            await query.edit_message_text(f"{ET('cross')} <b>Rejected Withdrawal #{wd_id}</b>", parse_mode=ParseMode.HTML)
             
             # Notify User
             notif = (
                 f"{ET('cross')} <b>WITHDRAWAL REJECTED</b>\n"
                 f"━━━━━━━━━━━━━━━━━━━━\n"
-                f"Request ID: <code>#{wd_id}</code>\n"
-                f"Amount <code>৳{w['amount']:.2f} BDT</code> has been refunded to your account balance."
+                f"{ET('tag')} Request ID: <code>#{wd_id}</code>\n"
+                f"{ET('money')} Amount <code>৳{w['amount']:.2f} BDT</code> has been refunded to your account balance."
             )
             try:
                 await context.bot.send_message(chat_id=int(target_uid), text=notif, parse_mode=ParseMode.HTML)
@@ -1121,9 +1151,9 @@ async def show_admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"{ET('danger')} <b>Banned Users:</b> <code>{total_banned}</code>\n"
         f"{ET('facebook')} <b>Total ID Sells:</b> <code>{total_sells}</code>\n"
         f"━━━━━━━━━━━━━━━━━━━━\n"
-        f"🔑 <b>UID&Pass Password:</b> <code>{cfg.get('uid_pass_default_pass')}</code>\n"
-        f"🔑 <b>UID&Cookies Password:</b> <code>{cfg.get('uid_cookies_default_pass')}</code>\n"
-        f"📢 <b>Force Join Channels:</b> <code>{len(cfg.get('force_join_channels', []))} Configured</code>"
+        f"{ET('key')} <b>UID&Pass Password:</b> <code>{cfg.get('uid_pass_default_pass')}</code>\n"
+        f"{ET('key')} <b>UID&Cookies Password:</b> <code>{cfg.get('uid_cookies_default_pass')}</code>\n"
+        f"{ET('announcement')} <b>Force Join Channels:</b> <code>{len(cfg.get('force_join_channels', []))} Configured</code>"
     )
     
     kb = {"inline_keyboard": [
@@ -1145,11 +1175,11 @@ async def show_admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ],
         [
             {"text": "MIN WITHDRAW SET", "callback_data": "adm_set_min_wd", "style": "primary", "icon_custom_emoji_id": EI("withdraw")},
-            {"text": "PAYMENT METHODS", "callback_data": "adm_toggle_pay", "style": "primary", "icon_custom_emoji_id": EI("bkash")}
+            {"text": "PAYMENT METHODS", "callback_data": "adm_toggle_pay_menu", "style": "primary", "icon_custom_emoji_id": EI("bkash")}
         ],
         [
-            {"text": "SELL SYSTEM TOGGLE", "callback_data": "adm_toggle_sell", "style": "primary", "icon_custom_emoji_id": EI("facebook")},
-            {"text": "PASSWORDS SET", "callback_data": "adm_set_passes", "style": "primary", "icon_custom_emoji_id": EI("pin")}
+            {"text": "SELL SYSTEM TOGGLE", "callback_data": "adm_toggle_sell_menu", "style": "primary", "icon_custom_emoji_id": EI("facebook")},
+            {"text": "PASSWORDS SET", "callback_data": "adm_set_passes", "style": "primary", "icon_custom_emoji_id": EI("key")}
         ],
         [
             {"text": "BAN / UNBAN USER", "callback_data": "adm_ban_menu", "style": "danger", "icon_custom_emoji_id": EI("delete")},
@@ -1169,10 +1199,12 @@ async def handle_admin_callbacks(update: Update, context: ContextTypes.DEFAULT_T
     query = update.callback_query
     cfg = get_config()
     
-    if data == "adm_users_file":
+    if data == "adm_back_main":
+        await show_admin_panel(update, context)
+        return
+
+    elif data == "adm_users_file":
         users = load_data(USER_DATA_FILE, {})
-        sells = load_data(SELL_DATA_FILE, {})
-        
         content = "ZARYA ACCOUNTS REGISTERED USERS DUMP\n"
         content += "========================================\n\n"
         for uid, u in users.items():
@@ -1180,7 +1212,7 @@ async def handle_admin_callbacks(update: Update, context: ContextTypes.DEFAULT_T
             
         f = io.BytesIO(content.encode('utf-8'))
         f.name = "All_Users_Report.txt"
-        await context.bot.send_document(chat_id=query.from_user.id, document=f, caption="📊 Complete Registered Users Report")
+        await context.bot.send_document(chat_id=query.from_user.id, document=f, caption=f"{ET('done')} Complete Registered Users Report")
         return
 
     elif data == "adm_broadcast":
@@ -1221,7 +1253,9 @@ async def handle_admin_callbacks(update: Update, context: ContextTypes.DEFAULT_T
     elif data == "adm_set_passes":
         context.user_data["state"] = "ADM_WAITING_PASS_TYPE"
         kb = {"inline_keyboard": [
-            [{"text": "Set UID&Pass Password", "callback_data": "adm_pass_up"}, {"text": "Set UID&Cookies Password", "callback_data": "adm_pass_cook"}]
+            [{"text": "Set UID&Pass Password", "callback_data": "adm_pass_up", "style": "primary", "icon_custom_emoji_id": EI("key")}],
+            [{"text": "Set UID&Cookies Password", "callback_data": "adm_pass_cook", "style": "success", "icon_custom_emoji_id": EI("key")}],
+            [{"text": "BACK TO ADMIN", "callback_data": "adm_back_main", "style": "danger", "icon_custom_emoji_id": EI("delete")}]
         ]}
         await query.message.reply_text("Select which system password to change:", reply_markup=kb)
         return
@@ -1236,26 +1270,82 @@ async def handle_admin_callbacks(update: Update, context: ContextTypes.DEFAULT_T
         await query.message.reply_text("Enter new default password for UID & Cookies:")
         return
 
-    elif data == "adm_toggle_pay":
-        cfg["bkash_active"] = not cfg.get("bkash_active", True)
-        save_config(cfg)
-        await query.answer(f"Bkash status set to: {cfg['bkash_active']}", show_alert=True)
+    # PAYMENT METHODS SUB-MENU TOGGLE
+    elif data in ["adm_toggle_pay_menu", "adm_toggle_bkash", "adm_toggle_nagad", "adm_toggle_binance"]:
+        if data == "adm_toggle_bkash":
+            cfg["bkash_active"] = not cfg.get("bkash_active", True)
+            save_config(cfg)
+        elif data == "adm_toggle_nagad":
+            cfg["nagad_active"] = not cfg.get("nagad_active", True)
+            save_config(cfg)
+        elif data == "adm_toggle_binance":
+            cfg["binance_active"] = not cfg.get("binance_active", True)
+            save_config(cfg)
+
+        b_st = "ON" if cfg.get("bkash_active", True) else "OFF"
+        n_st = "ON" if cfg.get("nagad_active", True) else "OFF"
+        bi_st = "ON" if cfg.get("binance_active", True) else "OFF"
+
+        msg = (
+            f"{ET('bkash')} <b>PAYMENT METHOD CONTROL PANEL</b>\n"
+            f"━━━━━━━━━━━━━━━━━━━━\n"
+            f"{ET('tag')} Bkash Status: <b>{b_st}</b>\n"
+            f"{ET('tag')} Nagad Status: <b>{n_st}</b>\n"
+            f"{ET('tag')} Binance Status: <b>{bi_st}</b>"
+        )
+        kb = {"inline_keyboard": [
+            [{"text": f"BKASH [{b_st}]", "callback_data": "adm_toggle_bkash", "style": "success" if b_st=="ON" else "danger", "icon_custom_emoji_id": EI("bkash")}],
+            [{"text": f"NAGAD [{n_st}]", "callback_data": "adm_toggle_nagad", "style": "success" if n_st=="ON" else "danger", "icon_custom_emoji_id": EI("nagad")}],
+            [{"text": f"BINANCE [{bi_st}]", "callback_data": "adm_toggle_binance", "style": "success" if bi_st=="ON" else "danger", "icon_custom_emoji_id": EI("binance")}],
+            [{"text": "BACK TO ADMIN", "callback_data": "adm_back_main", "style": "primary", "icon_custom_emoji_id": EI("admin")}]
+        ]}
+        await query.edit_message_text(msg, reply_markup=kb, parse_mode=ParseMode.HTML)
         return
 
-    elif data == "adm_toggle_sell":
-        cfg["sell_system_active"] = not cfg.get("sell_system_active", True)
-        save_config(cfg)
-        await query.answer(f"Facebook Sell system set to: {cfg['sell_system_active']}", show_alert=True)
+    # SELL SYSTEM TOGGLE SUB-MENU
+    elif data in ["adm_toggle_sell_menu", "adm_toggle_sell_global", "adm_toggle_sell_up", "adm_toggle_sell_cook"]:
+        if data == "adm_toggle_sell_global":
+            cfg["sell_system_active"] = not cfg.get("sell_system_active", True)
+            save_config(cfg)
+        elif data == "adm_toggle_sell_up":
+            cfg["uid_pass_active"] = not cfg.get("uid_pass_active", True)
+            save_config(cfg)
+        elif data == "adm_toggle_sell_cook":
+            cfg["uid_cookies_active"] = not cfg.get("uid_cookies_active", True)
+            save_config(cfg)
+
+        g_st = "ON" if cfg.get("sell_system_active", True) else "OFF"
+        up_st = "ON" if cfg.get("uid_pass_active", True) else "OFF"
+        ck_st = "ON" if cfg.get("uid_cookies_active", True) else "OFF"
+
+        msg = (
+            f"{ET('facebook')} <b>SELL SYSTEM CONTROL PANEL</b>\n"
+            f"━━━━━━━━━━━━━━━━━━━━\n"
+            f"{ET('tag')} Global Sell System: <b>{g_st}</b>\n"
+            f"{ET('tag')} UID & Pass Sell: <b>{up_st}</b>\n"
+            f"{ET('tag')} UID & Cookies Sell: <b>{ck_st}</b>"
+        )
+        kb = {"inline_keyboard": [
+            [{"text": f"GLOBAL SYSTEM [{g_st}]", "callback_data": "adm_toggle_sell_global", "style": "success" if g_st=="ON" else "danger", "icon_custom_emoji_id": EI("facebook")}],
+            [{"text": f"UID & PASS [{up_st}]", "callback_data": "adm_toggle_sell_up", "style": "success" if up_st=="ON" else "danger", "icon_custom_emoji_id": EI("key")}],
+            [{"text": f"UID & COOKIES [{ck_st}]", "callback_data": "adm_toggle_sell_cook", "style": "success" if ck_st=="ON" else "danger", "icon_custom_emoji_id": EI("ck")}],
+            [{"text": "BACK TO ADMIN", "callback_data": "adm_back_main", "style": "primary", "icon_custom_emoji_id": EI("admin")}]
+        ]}
+        await query.edit_message_text(msg, reply_markup=kb, parse_mode=ParseMode.HTML)
         return
 
     elif data == "adm_fj_menu":
         channels = cfg.get("force_join_channels", [])
-        txt = "<b>Current Force Join Channels:</b>\n\n"
+        txt = f"<b>{ET('link')} Current Force Join Channels:</b>\n\n"
         for idx, ch in enumerate(channels, 1):
             txt += f"{idx}. Chat ID: <code>{ch.get('chat_id')}</code> | Link: {ch.get('link')}\n"
             
         kb = {"inline_keyboard": [
-            [{"text": "+ ADD CHANNEL", "callback_data": "adm_fj_add"}, {"text": "CLEAR ALL CHANNELS", "callback_data": "adm_fj_clear"}]
+            [
+                {"text": "+ ADD CHANNEL", "callback_data": "adm_fj_add", "style": "success", "icon_custom_emoji_id": EI("link")},
+                {"text": "CLEAR ALL", "callback_data": "adm_fj_clear", "style": "danger", "icon_custom_emoji_id": EI("delete")}
+            ],
+            [{"text": "BACK TO ADMIN", "callback_data": "adm_back_main", "style": "primary", "icon_custom_emoji_id": EI("admin")}]
         ]}
         await query.message.reply_text(txt, reply_markup=kb, parse_mode=ParseMode.HTML)
         return
@@ -1296,12 +1386,12 @@ async def handle_admin_input_states(update: Update, context: ContextTypes.DEFAUL
         count = 0
         for uid in users:
             try:
-                await context.bot.send_message(chat_id=int(uid), text=f"📢 <b>ANNOUNCEMENT</b>\n━━━━━━━━━━━━━━━━━━━━\n{text}", parse_mode=ParseMode.HTML)
+                await context.bot.send_message(chat_id=int(uid), text=f"{ET('announcement')} <b>ANNOUNCEMENT</b>\n━━━━━━━━━━━━━━━━━━━━\n{text}", parse_mode=ParseMode.HTML)
                 count += 1
                 await asyncio.sleep(0.05)
             except:
                 pass
-        await update.message.reply_text(f"✅ Broadcast complete. Delivered to {count} users.")
+        await update.message.reply_text(f"{ET('done')} Broadcast complete. Delivered to {count} users.")
         return
 
     elif state == "ADM_WAITING_ADD_BAL_USER":
@@ -1318,7 +1408,7 @@ async def handle_admin_input_states(update: Update, context: ContextTypes.DEFAUL
             u["balance"] += amt
             update_user(target, u)
             context.user_data.clear()
-            await update.message.reply_text(f"✅ Added ৳{amt:.2f} BDT to User #{target}. New Balance: ৳{u['balance']:.2f} BDT.")
+            await update.message.reply_text(f"{ET('done')} Added ৳{amt:.2f} BDT to User #{target}. New Balance: ৳{u['balance']:.2f} BDT.")
         except Exception as e:
             await update.message.reply_text(f"Error: {e}")
         return
@@ -1338,7 +1428,7 @@ async def handle_admin_input_states(update: Update, context: ContextTypes.DEFAUL
             if u["balance"] < 0: u["balance"] = 0
             update_user(target, u)
             context.user_data.clear()
-            await update.message.reply_text(f"✅ Debited ৳{amt:.2f} BDT from User #{target}. New Balance: ৳{u['balance']:.2f} BDT.")
+            await update.message.reply_text(f"{ET('done')} Debited ৳{amt:.2f} BDT from User #{target}. New Balance: ৳{u['balance']:.2f} BDT.")
         except Exception as e:
             await update.message.reply_text(f"Error: {e}")
         return
@@ -1348,7 +1438,7 @@ async def handle_admin_input_states(update: Update, context: ContextTypes.DEFAUL
             cfg["referral_reward"] = float(text)
             save_config(cfg)
             context.user_data.clear()
-            await update.message.reply_text(f"✅ Referral reward updated to ৳{cfg['referral_reward']:.2f} BDT.")
+            await update.message.reply_text(f"{ET('done')} Referral reward updated to ৳{cfg['referral_reward']:.2f} BDT.")
         except:
             await update.message.reply_text("Invalid amount.")
         return
@@ -1358,7 +1448,7 @@ async def handle_admin_input_states(update: Update, context: ContextTypes.DEFAUL
             cfg["uid_pass_rate"] = float(text)
             save_config(cfg)
             context.user_data.clear()
-            await update.message.reply_text(f"✅ UID & Pass rate updated to ৳{cfg['uid_pass_rate']:.2f} BDT.")
+            await update.message.reply_text(f"{ET('done')} UID & Pass rate updated to ৳{cfg['uid_pass_rate']:.2f} BDT.")
         except:
             await update.message.reply_text("Invalid rate.")
         return
@@ -1368,7 +1458,7 @@ async def handle_admin_input_states(update: Update, context: ContextTypes.DEFAUL
             cfg["uid_cookies_rate"] = float(text)
             save_config(cfg)
             context.user_data.clear()
-            await update.message.reply_text(f"✅ UID & Cookies rate updated to ৳{cfg['uid_cookies_rate']:.2f} BDT.")
+            await update.message.reply_text(f"{ET('done')} UID & Cookies rate updated to ৳{cfg['uid_cookies_rate']:.2f} BDT.")
         except:
             await update.message.reply_text("Invalid rate.")
         return
@@ -1378,7 +1468,7 @@ async def handle_admin_input_states(update: Update, context: ContextTypes.DEFAUL
             cfg["min_withdraw"] = float(text)
             save_config(cfg)
             context.user_data.clear()
-            await update.message.reply_text(f"✅ Minimum withdrawal updated to ৳{cfg['min_withdraw']:.2f} BDT.")
+            await update.message.reply_text(f"{ET('done')} Minimum withdrawal updated to ৳{cfg['min_withdraw']:.2f} BDT.")
         except:
             await update.message.reply_text("Invalid threshold.")
         return
@@ -1387,14 +1477,14 @@ async def handle_admin_input_states(update: Update, context: ContextTypes.DEFAUL
         cfg["uid_pass_default_pass"] = text.strip()
         save_config(cfg)
         context.user_data.clear()
-        await update.message.reply_text(f"✅ UID & Pass default password set to: <code>{cfg['uid_pass_default_pass']}</code>", parse_mode=ParseMode.HTML)
+        await update.message.reply_text(f"{ET('done')} UID & Pass default password set to: <code>{cfg['uid_pass_default_pass']}</code>", parse_mode=ParseMode.HTML)
         return
 
     elif state == "ADM_WAITING_COOK_PASS_VAL":
         cfg["uid_cookies_default_pass"] = text.strip()
         save_config(cfg)
         context.user_data.clear()
-        await update.message.reply_text(f"✅ UID & Cookies default password set to: <code>{cfg['uid_cookies_default_pass']}</code>", parse_mode=ParseMode.HTML)
+        await update.message.reply_text(f"{ET('done')} UID & Cookies default password set to: <code>{cfg['uid_cookies_default_pass']}</code>", parse_mode=ParseMode.HTML)
         return
 
     elif state == "ADM_WAITING_FJ_ID":
@@ -1411,7 +1501,7 @@ async def handle_admin_input_states(update: Update, context: ContextTypes.DEFAUL
         cfg["force_join_channels"] = channels
         save_config(cfg)
         context.user_data.clear()
-        await update.message.reply_text("✅ Force join channel added successfully!")
+        await update.message.reply_text(f"{ET('done')} Force join channel added successfully!")
         return
 
     elif state == "ADM_WAITING_BAN_ID":
@@ -1420,11 +1510,11 @@ async def handle_admin_input_states(update: Update, context: ContextTypes.DEFAUL
         if target in [str(x) for x in banned]:
             banned.remove(target)
             save_data(banned, BANNED_USERS_FILE)
-            await update.message.reply_text(f"✅ User #{target} UNBANNED successfully.")
+            await update.message.reply_text(f"{ET('done')} User #{target} UNBANNED successfully.")
         else:
             banned.append(target)
             save_data(banned, BANNED_USERS_FILE)
-            await update.message.reply_text(f"🚫 User #{target} BANNED successfully.")
+            await update.message.reply_text(f"{ET('danger')} User #{target} BANNED successfully.")
         context.user_data.clear()
         return
 
@@ -1432,15 +1522,15 @@ async def handle_admin_input_states(update: Update, context: ContextTypes.DEFAUL
         target = text.strip()
         u = get_user(target)
         msg = (
-            f"🔍 <b>USER DETAILED SCAN REPORT (#{target})</b>\n"
+            f"{ET('search')} <b>USER DETAILED SCAN REPORT (#{target})</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
-            f"👤 <b>Name:</b> {u.get('full_name')}\n"
-            f"💰 <b>Balance:</b> ৳{u.get('balance'):.2f} BDT\n"
-            f"📦 <b>Total Sells:</b> {u.get('total_sell')}\n"
-            f"✅ <b>Approved Sells:</b> {u.get('approved_sell')}\n"
-            f"❌ <b>Rejected Sells:</b> {u.get('rejected_sell')}\n"
-            f"👥 <b>Total Refers:</b> {u.get('referral_count')}\n"
-            f"📅 <b>Joined Date:</b> {u.get('joined_date')}"
+            f"{ET('user')} <b>Name:</b> {u.get('full_name')}\n"
+            f"{ET('money')} <b>Balance:</b> ৳{u.get('balance'):.2f} BDT\n"
+            f"{ET('facebook')} <b>Total Sells:</b> {u.get('total_sell')}\n"
+            f"{ET('done')} <b>Approved Sells:</b> {u.get('approved_sell')}\n"
+            f"{ET('cross')} <b>Rejected Sells:</b> {u.get('rejected_sell')}\n"
+            f"{ET('refer')} <b>Total Refers:</b> {u.get('referral_count')}\n"
+            f"{ET('date')} <b>Joined Date:</b> {u.get('joined_date')}"
         )
         context.user_data.clear()
         await update.message.reply_text(msg, parse_mode=ParseMode.HTML)
@@ -1450,7 +1540,7 @@ async def handle_admin_input_states(update: Update, context: ContextTypes.DEFAUL
         cfg["support_username"] = text.strip()
         save_config(cfg)
         context.user_data.clear()
-        await update.message.reply_text(f"✅ Helpline ID set to {cfg['support_username']}")
+        await update.message.reply_text(f"{ET('done')} Helpline ID set to {cfg['support_username']}")
         return
 
 # ==============================================================================
