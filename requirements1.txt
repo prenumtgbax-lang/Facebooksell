@@ -1,6 +1,5 @@
-python-telegram-bot[job-queue]>=20.0
-httpx[http2]
+requests
+firebase-admin
+urllib3
+beautifulsoup4
 pyotp
-aiohttp
-nest_asyncio
-certifi
