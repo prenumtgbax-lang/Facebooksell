@@ -1,5 +1,1 @@
-requests
-firebase-admin
-urllib3
-beautifulsoup4
-pyotp
+pyTelegramBotAPI==4.15.2
