@@ -4,7 +4,7 @@ import telebot
 from telebot import types
 
 # ==================== CONFIGURATION ====================
-BOT_TOKEN = "8883130109:AAHTUemUPZ6vC8nR1_YjMui2DGCyTRgugIU"  # আপনার বট টোকেন দিন
+BOT_TOKEN = "888313009:AAHTmUPZ6vC8nR1_YjMui2DGCyTRgugIU"  # আপনার বট টোকেন দিন
 ADMIN_ID = 6922048527  # আপনার টেলিগ্রাম নিউমেরিক ইউজার আইডি দিন
 # =======================================================
 
